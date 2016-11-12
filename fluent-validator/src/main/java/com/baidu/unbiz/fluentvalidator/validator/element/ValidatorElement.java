@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.Validator;
-import com.baidu.unbiz.fluentvalidator.able.ListAble;
+import com.baidu.unbiz.fluentvalidator.able.Listable;
 import com.baidu.unbiz.fluentvalidator.able.ToStringable;
 
 /**
@@ -13,7 +13,7 @@ import com.baidu.unbiz.fluentvalidator.able.ToStringable;
  *
  * @author zhangxu
  */
-public class ValidatorElement implements ListAble<ValidatorElement> {
+public class ValidatorElement implements Listable<ValidatorElement> {
 
     /**
      * 验证器

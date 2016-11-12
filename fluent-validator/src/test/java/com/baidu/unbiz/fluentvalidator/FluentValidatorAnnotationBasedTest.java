@@ -37,6 +37,18 @@ public class FluentValidatorAnnotationBasedTest {
     }
 
     @Test
+    public void testCar2() {
+        Car car = getValidCar();
+
+        Result ret = FluentValidator.checkAll().configure(new SimpleRegistry())
+                .on(car)
+                .doValidate()
+                .result(toSimple());
+        System.out.println(ret);
+        assertThat(ret.isSuccess(), is(true));
+    }
+
+    @Test
     public void testCarSeatContErrorFailFast() {
         Car car = getValidCar();
         car.setSeatCount(99);
@@ -93,7 +105,7 @@ public class FluentValidatorAnnotationBasedTest {
 
     @Test
     public void testCarArray() {
-        Car[] cars = getValidCars().toArray(new Car[] {});
+        Car[] cars = getValidCars().toArray(new Car[]{});
 
         Result ret = FluentValidator.checkAll().configure(new SimpleRegistry())
                 .onEach(cars)
@@ -105,7 +117,7 @@ public class FluentValidatorAnnotationBasedTest {
 
     @Test
     public void testCarArrayNegative() {
-        Car[] cars = getValidCars().toArray(new Car[] {});
+        Car[] cars = getValidCars().toArray(new Car[]{});
         cars[0].setSeatCount(0);
         cars[1].setLicensePlate("BEIJING123");
 
@@ -169,7 +181,7 @@ public class FluentValidatorAnnotationBasedTest {
         Car car = getValidCar();
         car.setManufacturer("XXXX");
 
-        Result ret = FluentValidator.checkAll(new Class<?>[] {CheckManufacturer.class})
+        Result ret = FluentValidator.checkAll(new Class<?>[]{CheckManufacturer.class})
                 .configure(new SimpleRegistry())
                 .on(car)
                 .doValidate()
@@ -184,7 +196,7 @@ public class FluentValidatorAnnotationBasedTest {
         Car car = getValidCar();
         car.setManufacturer("XXXX");
 
-        Result ret = FluentValidator.checkAll(new Class<?>[] {})
+        Result ret = FluentValidator.checkAll(new Class<?>[]{})
                 .configure(new SimpleRegistry())
                 .on(car)
                 .doValidate()
@@ -199,7 +211,7 @@ public class FluentValidatorAnnotationBasedTest {
         Car car = getValidCar();
         car.setSeatCount(11111);
 
-        Result ret = FluentValidator.checkAll(new Class<?>[] {CheckManufacturer.class})
+        Result ret = FluentValidator.checkAll(new Class<?>[]{CheckManufacturer.class})
                 .configure(new SimpleRegistry())
                 .on(car)
                 .doValidate()

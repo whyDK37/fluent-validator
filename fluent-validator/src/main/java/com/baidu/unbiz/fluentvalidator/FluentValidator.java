@@ -9,7 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baidu.unbiz.fluentvalidator.able.ListAble;
+import com.baidu.unbiz.fluentvalidator.able.Listable;
 import com.baidu.unbiz.fluentvalidator.able.ToStringable;
 import com.baidu.unbiz.fluentvalidator.annotation.NotThreadSafe;
 import com.baidu.unbiz.fluentvalidator.annotation.Stateful;
@@ -29,9 +29,9 @@ import com.baidu.unbiz.fluentvalidator.validator.element.ValidatorElementList;
 
 /**
  * 链式调用验证器
- * <p/>
+ * <p>
  * 按照<a href="https://en.wikipedia.org/wiki/Fluent_interface">Fluent Interface</a>风格实现的验证工具，以一种近似于可以语义解释的方式做对象的验证。
- * <p/>
+ * <p>
  * 典型的调用方式如下：
  * <pre>
  * Result ret = FluentValidator.checkAll().failFast()
@@ -45,7 +45,7 @@ import com.baidu.unbiz.fluentvalidator.validator.element.ValidatorElementList;
 @Stateful
 public class FluentValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FluentValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(FluentValidator.class);
 
     /**
      * 验证器链，惰性求值期间就是不断的改变这个链表，及时求值期间就是遍历链表依次执行验证
@@ -62,7 +62,7 @@ public class FluentValidator {
 
     /**
      * 验证器上下文
-     * <p/>
+     * <p>
      * 该<tt>context</tt>可以在所有验证器间共享数据
      */
     private ValidatorContext context = new ValidatorContext();
@@ -79,7 +79,7 @@ public class FluentValidator {
 
     /**
      * 如果启用通过{@link com.baidu.unbiz.fluentvalidator.annotation.FluentValidate}注解方式的验证，需要寻找验证器实例，这里为注册中心
-     * <p/>
+     * <p>
      * 通过{@link #configure(Registry)}来配置
      */
     private Registry registry = new SimpleRegistry();
@@ -94,7 +94,6 @@ public class FluentValidator {
      *
      * @param key   键
      * @param value 值
-     *
      * @return FluentValidator
      */
     public FluentValidator putAttribute2Context(String key, Object value) {
@@ -110,7 +109,6 @@ public class FluentValidator {
      *
      * @param key   键
      * @param value 闭包
-     *
      * @return FluentValidator
      */
     public FluentValidator putClosure2Context(String key, Closure value) {
@@ -154,7 +152,6 @@ public class FluentValidator {
      * 创建<tt>FluentValidator</tt>
      *
      * @param groups 分组
-     *
      * @return FluentValidator
      */
     public static FluentValidator checkAll(Class... groups) {
@@ -185,7 +182,6 @@ public class FluentValidator {
      * 如果启用通过{@link com.baidu.unbiz.fluentvalidator.annotation.FluentValidate}注解方式的验证，需要寻找验证器实例，这里配置注册中心的步骤
      *
      * @param registry 验证器注册查找器
-     *
      * @return FluentValidator
      */
     public FluentValidator configure(Registry registry) {
@@ -199,12 +195,11 @@ public class FluentValidator {
      * 需要保证{@link #configure(Registry)}已经先执行配置完毕<code>Registry</code>
      *
      * @param t 待验证对象
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator on(T t) {
         MultiValidatorElement multiValidatorElement = doOn(t);
-        LOGGER.debug(multiValidatorElement + " will be performed");
+        logger.debug("{} will be performed", multiValidatorElement);
         lastAddCount = multiValidatorElement.size();
         return this;
     }
@@ -212,11 +207,10 @@ public class FluentValidator {
     /**
      * 在某个数组对象上通过{@link com.baidu.unbiz.fluentvalidator.annotation.FluentValidate}注解方式的验证，
      * 需要保证{@link #configure(Registry)}已经先执行配置完毕<code>Registry</code>
-     * <p/>
+     * <p>
      * 注：当数组为空时，则会跳过
      *
      * @param t 待验证对象
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator onEach(T[] t) {
@@ -231,11 +225,10 @@ public class FluentValidator {
     /**
      * 在某个集合对象上通过{@link com.baidu.unbiz.fluentvalidator.annotation.FluentValidate}注解方式的验证，
      * 需要保证{@link #configure(Registry)}已经先执行配置完毕<code>Registry</code>
-     * <p/>
+     * <p>
      * 注：当集合为空时，则会跳过
      *
      * @param t 待验证对象
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator onEach(Collection<T> t) {
@@ -249,7 +242,7 @@ public class FluentValidator {
             multiValidatorElement = doOn(element);
             lastAddCount += multiValidatorElement.size();
         }
-        LOGGER.debug(
+        logger.debug(
                 String.format("Total %d of %s will be performed", t.size(), multiValidatorElement));
         return this;
     }
@@ -259,7 +252,6 @@ public class FluentValidator {
      * 需要保证{@link #configure(Registry)}已经先执行配置完毕<code>Registry</code>
      *
      * @param t 待验证对象
-     *
      * @return FluentValidator
      */
     //TODO That would be much more easier if leveraging Java8 lambda feature
@@ -282,14 +274,14 @@ public class FluentValidator {
             if (!CollectionUtil.isEmpty(anntValidatorOfOneField.getValidators())) {
                 if (!ArrayUtil.hasIntersection(anntValidatorOfOneField.getGroups(), groups)) {
                     // groups have no intersection
-                    LOGGER.debug(String.format("Current groups: %s not match %s", Arrays.toString(groups),
+                    logger.debug(String.format("Current groups: %s not match %s", Arrays.toString(groups),
                             anntValidatorOfOneField));
                     continue;
                 }
 
                 if (!ArrayUtil.isEmpty(excludeGroups)) {
                     if (ArrayUtil.hasIntersection(anntValidatorOfOneField.getGroups(), excludeGroups)) {
-                        LOGGER.debug(String.format("Current groups: %s will be ignored because you specify %s",
+                        logger.debug(String.format("Current groups: %s will be ignored because you specify %s",
                                 Arrays.toString(
                                         excludeGroups), anntValidatorOfOneField));
                         continue;
@@ -329,7 +321,6 @@ public class FluentValidator {
      *
      * @param t 待验证对象
      * @param v 验证器
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator on(T t, Validator<T> v) {
@@ -344,7 +335,6 @@ public class FluentValidator {
      *
      * @param t     待验证对象
      * @param chain 验证器链
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator on(T t, ValidatorChain chain) {
@@ -363,12 +353,11 @@ public class FluentValidator {
 
     /**
      * 在待验证对象数组<tt>t</tt>上，使用<tt>v</tt>验证器进行验证
-     * <p/>
+     * <p>
      * 注：当数组为空时，则会跳过
      *
      * @param t 待验证对象数组
      * @param v 验证器
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator onEach(T[] t, final Validator<T> v) {
@@ -383,12 +372,11 @@ public class FluentValidator {
 
     /**
      * 在待验证对象集合<tt>t</tt>上，使用<tt>v</tt>验证器进行验证
-     * <p/>
+     * <p>
      * 注：当集合为空时，则会跳过
      *
      * @param t 待验证对象集合
      * @param v 验证器
-     *
      * @return FluentValidator
      */
     public <T> FluentValidator onEach(Collection<T> t, final Validator<T> v) {
@@ -414,16 +402,15 @@ public class FluentValidator {
      *
      * @param listAble 验证对象及其验证器封装类
      */
-    protected void doAdd(ListAble<ValidatorElement> listAble) {
+    protected void doAdd(Listable<ValidatorElement> listAble) {
         validatorElementList.add(listAble);
-        LOGGER.debug(listAble + " will be performed");
+        logger.debug(listAble + " will be performed");
     }
 
     /**
      * 当满足<code>expression</code>条件时，才去使用前一个{@link Validator}或者{@link ValidatorChain}来验证
      *
      * @param expression 满足条件表达式
-     *
      * @return FluentValidator
      */
     public FluentValidator when(boolean expression) {
@@ -448,20 +435,18 @@ public class FluentValidator {
      * 按照指定验证回调条件，开始使用验证
      *
      * @param cb 验证回调
-     *
      * @return FluentValidator
-     *
      * @see ValidateCallback
      */
     public FluentValidator doValidate(ValidateCallback cb) {
         Preconditions.checkNotNull(cb, "ValidateCallback should not be NULL");
         if (validatorElementList.isEmpty()) {
-            LOGGER.debug("Nothing to validate");
+            logger.debug("Nothing to validate");
             return this;
         }
         context.setResult(result);
 
-        LOGGER.debug("Start to validate through " + validatorElementList);
+        logger.debug("Start to validate through " + validatorElementList);
         long start = System.currentTimeMillis();
         try {
             GroupingHolder.setGrouping(groups);
@@ -482,14 +467,14 @@ public class FluentValidator {
                         v.onException(e, context, target);
                         cb.onUncaughtException(v, e, target);
                     } catch (Exception e1) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(v + " onException or onUncaughtException throws exception due to " + e1
+                        if (logger.isDebugEnabled()) {
+                            logger.error(v + " onException or onUncaughtException throws exception due to " + e1
                                     .getMessage(), e1);
                         }
                         throw new RuntimeValidateException(e1);
                     }
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(v + " failed due to " + e.getMessage(), e);
+                    if (logger.isDebugEnabled()) {
+                        logger.error(v + " failed due to " + e.getMessage(), e);
                     }
                     throw new RuntimeValidateException(e);
                 }
@@ -503,7 +488,7 @@ public class FluentValidator {
         } finally {
             GroupingHolder.clean();
             int timeElapsed = (int) (System.currentTimeMillis() - start);
-            LOGGER.debug("End to validate through" + validatorElementList + " costing " + timeElapsed + "ms with "
+            logger.debug("End to validate through" + validatorElementList + " costing " + timeElapsed + "ms with "
                     + "isSuccess=" + result.isSuccess());
             result.setTimeElapsed(timeElapsed);
         }
@@ -513,11 +498,10 @@ public class FluentValidator {
     /**
      * 转换为对外的验证结果，在<code>FluentValidator.on(..).on(..).doValidate()</code>这一连串“<a href="https://en.wikipedia
      * .org/wiki/Lazy_evaluation">惰性求值</a>”计算后的“及时求值”收殓出口。
-     * <p/>
+     * <p>
      * &lt;T&gt;是验证结果的泛型
      *
      * @param resultCollector 验证结果收集器
-     *
      * @return 对外验证结果
      */
     public <T> T result(ResultCollector<T> resultCollector) {
@@ -528,7 +512,6 @@ public class FluentValidator {
      * 设置分组
      *
      * @param groups 分组
-     *
      * @return FluentValidator
      */
     public FluentValidator setGroups(Class<?>[] groups) {
@@ -540,7 +523,6 @@ public class FluentValidator {
      * 设置是否快速失败
      *
      * @param isFailFast 是否快速失败
-     *
      * @return FluentValidator
      */
     public FluentValidator setIsFailFast(boolean isFailFast) {
@@ -552,7 +534,6 @@ public class FluentValidator {
      * 设置排除的分组
      *
      * @param excludeGroups 排除分组
-     *
      * @return FluentValidator
      */
     public FluentValidator setExcludeGroups(Class<?>[] excludeGroups) {

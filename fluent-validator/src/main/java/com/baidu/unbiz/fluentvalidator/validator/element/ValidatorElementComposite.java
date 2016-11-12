@@ -2,9 +2,8 @@ package com.baidu.unbiz.fluentvalidator.validator.element;
 
 import java.util.List;
 
-import com.baidu.unbiz.fluentvalidator.Const;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
-import com.baidu.unbiz.fluentvalidator.able.ListAble;
+import com.baidu.unbiz.fluentvalidator.able.Listable;
 import com.baidu.unbiz.fluentvalidator.util.CollectionUtil;
 
 /**
@@ -16,7 +15,7 @@ import com.baidu.unbiz.fluentvalidator.util.CollectionUtil;
  *
  * @author zhangxu
  */
-public abstract class ValidatorElementComposite implements ListAble<ValidatorElement> {
+public abstract class ValidatorElementComposite implements Listable<ValidatorElement> {
 
     /**
      * 待验证对象机器验证器列表

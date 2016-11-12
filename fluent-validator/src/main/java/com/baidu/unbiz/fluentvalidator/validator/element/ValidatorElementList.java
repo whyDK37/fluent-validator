@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
-import com.baidu.unbiz.fluentvalidator.able.ListAble;
+import com.baidu.unbiz.fluentvalidator.able.Listable;
 import com.baidu.unbiz.fluentvalidator.util.CollectionUtil;
 
 /**
@@ -17,14 +17,14 @@ public class ValidatorElementList {
     /**
      * 待验证对象及其验证器链表
      */
-    private LinkedList<ListAble<ValidatorElement>> validatorElementLinkedList = CollectionUtil.createLinkedList();
+    private LinkedList<Listable<ValidatorElement>> validatorElementLinkedList = CollectionUtil.createLinkedList();
 
     /**
      * 加入待验证对象及其验证器
      *
      * @param listAble 待验证对象及其验证器封装类
      */
-    public void add(ListAble<ValidatorElement> listAble) {
+    public void add(Listable<ValidatorElement> listAble) {
         this.validatorElementLinkedList.add(listAble);
     }
 
@@ -42,7 +42,7 @@ public class ValidatorElementList {
      *
      * @return 验证器链
      */
-    public LinkedList<ListAble<ValidatorElement>> getList() {
+    public LinkedList<Listable<ValidatorElement>> getList() {
         return validatorElementLinkedList;
     }
 
@@ -62,7 +62,7 @@ public class ValidatorElementList {
      */
     public List<ValidatorElement> getAllValidatorElements() {
         List<ValidatorElement> ret = CollectionUtil.createArrayList();
-        for (ListAble<ValidatorElement> e : validatorElementLinkedList) {
+        for (Listable<ValidatorElement> e : validatorElementLinkedList) {
             ret.addAll(e.getAsList());
         }
         return ret;
@@ -72,7 +72,7 @@ public class ValidatorElementList {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int count = 0;
-        for (ListAble<ValidatorElement> e : validatorElementLinkedList) {
+        for (Listable<ValidatorElement> e : validatorElementLinkedList) {
             if (count >= 20) {
                 sb.append("[");
                 sb.append(size() - count);
